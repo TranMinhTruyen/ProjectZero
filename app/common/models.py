@@ -10,11 +10,11 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(225), index=True)
     price = Column(Float, index=True)
-
     brand_id = Column(Integer, ForeignKey('brand.id'))
     category_id = Column(Integer, ForeignKey('category.id'))
-    orderdetail = relationship("OrderDetail", backref="product")
-    cart = relationship("Cart", backref="product")
+
+    order = relationship("OrderDetail")
+    cart = relationship("Cart")
 
 
 class Category(Base):
@@ -23,7 +23,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(225), index=True)
 
-    product = relationship("Product", backref="category_id")
+    products = relationship("Product")
 
 
 class Brand(Base):
@@ -32,7 +32,7 @@ class Brand(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(225), index=True)
 
-    product = relationship("Product", backref="brand_id")
+    product = relationship("Product")
 
 
 class Customer(Base):
@@ -48,8 +48,8 @@ class Customer(Base):
     andress = Column(String(225), nullable=True)
     is_active = Column(String(10), nullable=False)
 
-    order = relationship("Order", backref="customer_id")
-    cart = relationship("Cart", backref="customer")
+    order = relationship("Order")
+    customercart = relationship("Cart")
 
 
 class Employee(Base):
@@ -66,7 +66,7 @@ class Employee(Base):
     andress = Column(String(225), nullable=False)
     is_active = Column(String(10), nullable=False)
 
-    order = relationship("Order", backref="employee_id")
+    order = relationship("Order")
 
 
 class Order(Base):
@@ -82,18 +82,18 @@ class Order(Base):
 
     customer_id = Column(Integer, ForeignKey('customer.id'))
     employee_id = Column(Integer, ForeignKey('employee.id'))
-    orderdetail = relationship("OrderDetail", backref="order")
+    product = relationship("OrderDetail")
 
 class OrderDetail(Base):
-    __tablename__ = "order_detail"
+    __tablename__ = "orderdetail"
 
     order_id = Column(Integer, ForeignKey('order.id'), primary_key=True)
     product_id = Column(Integer, ForeignKey('product.id'), primary_key=True)
     total = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
 
-    product = relationship("Product", backref="orderdetail")
-    order = relationship("Order", backref="orderdetail")
+    product = relationship("Product")
+    order = relationship("Order")
 
 
 class Cart(Base):
@@ -104,5 +104,5 @@ class Cart(Base):
     total = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
 
-    customer = relationship("Customer", backref="cart")
-    product = relationship("Product", backref="cart")
+    customer = relationship("Customer")
+    product = relationship("Product")
