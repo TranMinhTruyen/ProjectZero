@@ -8,12 +8,17 @@ class Product(Base):
     __tablename__ = "product"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(225), index=True)
+    name = Column(String(20), index=True)
     price = Column(Float, index=True)
+    unit = Column(String(20), index=True, nullable=False)
+    in_stock = Column(Integer, index=True)
+    discount = Column(Integer, index=True)
+    image = Column(String(225), index=True, nullable=True)
+    description = Column(String(225), index=True, nullable=True)
     brand_id = Column(Integer, ForeignKey('brand.id'))
     category_id = Column(Integer, ForeignKey('category.id'))
 
-    order = relationship("OrderDetail")
+    order_detail = relationship("OrderDetail")
     cart = relationship("Cart")
 
 
@@ -21,7 +26,8 @@ class Category(Base):
     __tablename__ = "category"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(225), index=True)
+    name = Column(String(20), index=True)
+    description = Column(String(225), index=True, nullable=True)
 
     products = relationship("Product")
 
@@ -31,6 +37,8 @@ class Brand(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(225), index=True)
+    image = Column(String(225), index=True, nullable=True)
+    description = Column(String(225), index=True, nullable=True)
 
     product = relationship("Product")
 
@@ -44,7 +52,7 @@ class Customer(Base):
     firstname = Column(String(20), nullable=True)
     lastname = Column(String(20), nullable=True)
     birthday = Column(Date, nullable=True)
-    phonenumber = Column(Integer, nullable=True)
+    phonenumber = Column(String(10), nullable=True)
     andress = Column(String(225), nullable=True)
     is_active = Column(String(10), nullable=False)
 
@@ -61,8 +69,8 @@ class Employee(Base):
     firstname = Column(String(20), nullable=False)
     lastname = Column(String(20), nullable=False)
     birthday = Column(Date, nullable=False)
-    citizen_id = Column(Integer, nullable=False)
-    phonenumber = Column(Integer, nullable=False)
+    citizen_id = Column(String(10), nullable=False)
+    phonenumber = Column(String(10), nullable=False)
     andress = Column(String(225), nullable=False)
     is_active = Column(String(10), nullable=False)
 
@@ -74,15 +82,15 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     create_day = Column(Date, nullable=False)
-    phonenumber = Column(Integer, nullable=False)
+    phonenumber = Column(String(10), nullable=False)
     andress = Column(String(225), nullable=False)
     total_price = Column(Float, nullable=False)
-    status = Column(String(10), nullable=False)
+    status = Column(String(20), nullable=False)
     description = Column(String(225), nullable=True)
-
     customer_id = Column(Integer, ForeignKey('customer.id'))
     employee_id = Column(Integer, ForeignKey('employee.id'))
-    product = relationship("OrderDetail")
+
+    order_detail = relationship("OrderDetail")
 
 class OrderDetail(Base):
     __tablename__ = "orderdetail"
@@ -92,9 +100,6 @@ class OrderDetail(Base):
     total = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
 
-    product = relationship("Product")
-    order = relationship("Order")
-
 
 class Cart(Base):
 
@@ -103,6 +108,3 @@ class Cart(Base):
     product_id = Column(Integer, ForeignKey('product.id'), primary_key=True)
     total = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
-
-    customer = relationship("Customer")
-    product = relationship("Product")
