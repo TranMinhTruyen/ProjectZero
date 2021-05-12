@@ -23,6 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Swagger URL: http://127.0.0.1:8000/docs#/
+# Start Server: uvicorn app.main:app --reload
 
 if __name__ == "__main__":
     uvicorn.run(app)
