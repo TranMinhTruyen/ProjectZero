@@ -12,6 +12,7 @@ SECRET_KEY = secrets.token_hex(64)
 ALGORITHM = "HS256"
 
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -40,17 +41,30 @@ def decode_access_token(token: str):
     try:
         payload = jwt.decode(token=token, key=SECRET_KEY, algorithms=[ALGORITHM])
         account: str = payload.get("account")
-        password: str =payload.get("password")
+        password: str = payload.get("password")
+        role: str = payload.get("role")
         if account is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
     return {"account": account,
-            "password": password}
+            "password": password,
+            "role": role}
 
 
 def get_password_hash(password: str):
     return str(hashlib.sha224(password.strip().encode("utf-8")).hexdigest())
+
+
+def validate_user(token: str):
+    payload: dict = decode_access_token(token=token)
+    role: str = payload.get("role")
+    if payload is not None and role == "user":
+        return "user"
+    elif payload is not None and role == "emp":
+        return "emp"
+    else:
+        return None
 
 
 def authenticate_user(account: str, password: str, db: Session):
@@ -61,8 +75,10 @@ def authenticate_user(account: str, password: str, db: Session):
                                                                     password=get_password_hash(password=password),
                                                                     db=db)
     if customer is not None:
-        return customer
+        return {"customer": customer,
+                "role": "user"}
     elif employee is not None:
-        return employee
+        return {"employee": employee,
+                "role": "emp"}
     else:
         return None
