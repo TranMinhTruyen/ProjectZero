@@ -4,7 +4,7 @@ from fastapi.security import APIKeyCookie
 from app.common.dependencies import get_db, create_access_token, authenticate_user, timedelta, decode_access_token, \
     get_password_hash
 from app.repository import customer_repository, employee_repository
-from app.schemas import login_schemas, customer_schemas
+from app.schemas import login_schemas
 
 router = APIRouter(
     tags=['Login'],

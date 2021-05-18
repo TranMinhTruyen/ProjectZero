@@ -26,7 +26,7 @@ def get_all_brand(page: int, size: int, db: Session = Depends(get_db)):
     return brand_repository.get_all_brand(db=db, page=page, size=size)
 
 
-@router.get('/get_brand_by_keyword', response_model=brand_schemas.BrandResponse)
+@router.get('/get_brand_by_keyword/', response_model=brand_schemas.BrandResponse)
 def get_brand_by_keyword(page: int, size: int, keyword: Optional[str] = None, db: Session = Depends(get_db)):
     return brand_repository.get_brand_by_key_word(db, page=page, size=size, keyword=keyword)
 

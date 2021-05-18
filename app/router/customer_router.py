@@ -3,9 +3,9 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.common.dependencies import get_db, decode_access_token, get_password_hash, validate_user
+from app.common.dependencies import get_db, validate_user
 from app.repository import customer_repository
-from app.schemas import customer_schemas, login_schemas
+from app.schemas import customer_schemas
 
 router = APIRouter(
     tags=['Customer'],
@@ -22,12 +22,12 @@ def create_customer(request: customer_schemas.CustomerRequest, token: str, db: S
         return None
 
 
-@router.get('/get_all_customer')
+@router.get('/get_all_customer/', response_model=customer_schemas.CustomerResponse)
 def get_all_customer(page: int, size: int, db: Session = Depends(get_db)):
     return customer_repository.get_all_customer(db=db, page=page, size=size)
 
 
-@router.get('/get_customer_by_keyword')
+@router.get('/get_customer_by_keyword/', response_model=customer_schemas.CustomerResponse)
 def get_customer_by_keyword(page: int, size: int, keyword: Optional[str] = None, db: Session = Depends(get_db)):
     return customer_repository.get_customer_by_keyword(db=db, page=page, size=size, keyword=keyword)
 
