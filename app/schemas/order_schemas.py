@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import date
 
 
@@ -9,9 +9,9 @@ class OrderRequest(BaseModel):
     andress: str
     total_price: float
     status: str
-    description: str
+    description: Optional[str] = None
     customer_id: int
-    employee_id: int
+    employee_id: Optional[str] = None
 
 
 
@@ -23,9 +23,9 @@ class Order(BaseModel):
     andress: str
     total_price: float
     status: str
-    description: str
+    description: Optional[str] = None
     customer_id: int
-    employee_id: int
+    employee_id: Optional[int] = None
 
     class Config:
         orm_mode = True

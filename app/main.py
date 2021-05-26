@@ -1,8 +1,11 @@
+from typing import Optional
+
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from starlette.middleware.cors import CORSMiddleware
 
-from app.router import product_router, category_router, brand_router, customer_router, employee_router, login_router
+from app.router import product_router, category_router, brand_router, customer_router, employee_router, login_router, \
+    order_router
 from app.common import models
 from app.common.database import engine
 
@@ -14,6 +17,7 @@ app.include_router(category_router.router)
 app.include_router(brand_router.router)
 app.include_router(customer_router.router)
 app.include_router(employee_router.router)
+app.include_router(order_router.router)
 app.include_router(login_router.router)
 
 app.add_middleware(

@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 
 from app.common.dependencies import get_db, validate_user
@@ -14,13 +14,17 @@ router = APIRouter(
 )
 
 
-@router.post('/create_product/{token}', response_model=product_schemas.Product)
-def create_product(request: product_schemas.ProductRequest, token: str, db: Session = Depends(get_db)):
-    role: str = validate_user(token=token)
-    if role is not None and role == "emp":
-        return product_repository.create_product(db=db, product=request)
+@router.post('/create_product/')
+def create_product(request: product_schemas.ProductRequest, token: Optional[str] = Header(None), db: Session = Depends(get_db)):
+    if token is None:
+        return "Please login for this action"
     else:
-        return None
+        role: str = validate_user(token=token)
+    if role is not None and role == "emp":
+        product_repository.create_product(db=db, product=request)
+        return "Product is added"
+    elif role != "emp":
+        return "You don't have permission"
 
 
 @router.get('/get_all_product/', response_model=product_schemas.ProductResponse)
@@ -33,19 +37,22 @@ def get_product_by_keyword(page: int, size: int, keyword: Optional[str] = None, 
     return product_repository.get_product_by_keyword(db, page=page, size=size, keyword=keyword)
 
 
-@router.put('/update_product/{token}', response_model=product_schemas.Product)
-def update_product(product: product_schemas.ProductRequest, token: str, id: int, db: Session = Depends(get_db)):
+@router.put('/update_product/')
+def update_product(product: product_schemas.ProductRequest, id: int, token: Optional[str] = Header(None),
+                   db: Session = Depends(get_db)):
     role: str = validate_user(token=token)
     if role is not None and role == "emp":
-        return product_repository.update_product(db=db, product=product, id=id)
-    else:
-        return None
+        product_repository.update_product(db=db, product=product, id=id)
+        return "Product is updated"
+    elif role != "emp":
+        return "You don't have permission"
 
 
-@router.delete('/delete_product/{token}')
-def delete_product(id: int, token: str, db: Session = Depends(get_db)):
+@router.delete('/delete_product/')
+def delete_product(id: int, token: Optional[str] = Header(None), db: Session = Depends(get_db)):
     role: str = validate_user(token=token)
     if role is not None and role == "emp":
-        return product_repository.delete_product(db=db, id=id)
-    else:
-        return None
+        product_repository.delete_product(db=db, id=id)
+        return "Product is deleted"
+    elif role != "emp":
+        return "You don't have permission"

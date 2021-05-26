@@ -87,8 +87,8 @@ class Order(Base):
     total_price = Column(Float, nullable=False)
     status = Column(String(20), nullable=False)
     description = Column(String(225), nullable=True)
-    customer_id = Column(Integer, ForeignKey('customer.id'))
-    employee_id = Column(Integer, ForeignKey('employee.id'))
+    customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
+    employee_id = Column(Integer, ForeignKey('employee.id'), nullable=True)
 
     order_detail = relationship("OrderDetail")
 
